@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<title>Avdhuta — Daily Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121c;
+  --card: #171724;
+  --card2: #1d1d2e;
+  --border: rgba(200,170,90,0.13);
+  --gold: #d4a843;
+  --gold-light: #e8c96a;
+  --gold-dim: rgba(212,168,67,0.4);
+  --gold-glow: rgba(212,168,67,0.1);
+  --rust: #b85c2a;
+  --rust-light: #d4723a;
+  --cream: #f0e4cc;
+  --muted: rgba(240,228,204,0.42);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ── */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  height: 100dvh;
+}
+
+.screen {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: calc(var(--safe-top) + 16px) 18px 100px;
+  background: var(--bg);
+}
+.screen.active { display: block; animation: fadeUp .35s ease; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(14px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ambient */
+.screen::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 70% 35% at 15% 5%, rgba(180,90,30,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 85% 85%, rgba(212,168,67,0.06) 0%, transparent 55%);
+}
+
+/* ── BOTTOM NAV ── */
+#nav {
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding-bottom: var(--safe-bot);
+  position: relative;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px 8px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: 'Jost', sans-serif;
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color .25s;
+  gap: 5px;
+  min-height: 60px;
+}
+.nav-btn svg { width:22px; height:22px; stroke-width:1.5; transition: stroke .25s; }
+.nav-btn.active { color: var(--gold); }
+.nav-btn.active svg { stroke: var(--gold); }
+.nav-btn:not(.active) svg { stroke: var(--muted); }
+
+/* ── SHARED COMPONENTS ── */
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 300;
+  color: var(--cream);
+  margin-bottom: 4px;
+  position: relative; z-index:1;
+}
+.page-sub {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  position: relative; z-index:1;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 18px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  transition: border-color .3s, background .3s;
+}
+.card.glow { border-color: var(--gold-dim); background: var(--card2); }
+
+.label-tag {
+  font-size: 10px;
+  color: var(--rust-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.serif { font-family: 'Cormorant Garamond', serif; }
+.italic { font-style: italic; }
+
+/* ── SCREEN 1: MORNING ── */
+.greeting {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  position: relative; z-index:1;
+}
+
+.anchor-card {
+  background: linear-gradient(135deg, rgba(180,90,30,0.1), rgba(212,168,67,0.07));
+  border: 1px solid rgba(212,168,67,0.22);
+  border-radius: 18px;
+  padding: 22px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative; z-index:1;
+}
+.anchor-label { font-size:10px; color:var(--rust-light); letter-spacing:3px; text-transform:uppercase; margin-bottom:12px; }
+.anchor-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--cream);
+  line-height: 1.75;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all .3s;
+  position: relative; z-index:1;
+  -webkit-user-select: none; user-select: none;
+}
+.checklist-item.checked {
+  background: rgba(212,168,67,0.07);
+  border-color: var(--gold-dim);
+}
+.check-circle {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items:center; justify-content:center;
+  transition: all .3s;
+}
+.checklist-item.checked .check-circle {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+}
+.check-circle svg { width:13px; height:13px; stroke:var(--gold); stroke-width:2.5; opacity:0; transform:scale(.4); transition:all .3s; }
+.checklist-item.checked .check-circle svg { opacity:1; transform:scale(1); }
+.check-content { flex:1; }
+.check-title { font-size:15px; font-weight:400; color:var(--cream); margin-bottom:3px; }
+.check-sub { font-size:12px; color:var(--muted); line-height:1.5; }
+.check-time { font-size:10px; color:var(--rust-light); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px; }
+
+.progress-row {
+  display:flex; align-items:center; gap:12px;
+  margin-bottom: 20px;
+  position: relative; z-index:1;
+}
+.prog-bar { flex:1; height:3px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--rust),var(--gold)); border-radius:2px; transition:width .5s ease; }
+.prog-text { font-size:12px; color:var(--muted); white-space:nowrap; }
+
+/* ── SCREEN 2: SOS ── */
+.sos-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  position: relative; z-index:1;
+}
+
+.sos-btn {
+  width: 170px; height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(180,80,30,0.6), rgba(100,30,10,0.9));
+  border: 2px solid rgba(212,168,67,0.3);
+  box-shadow: 0 0 40px rgba(180,80,30,0.3), 0 0 80px rgba(180,80,30,0.1), inset 0 1px 0 rgba(255,255,255,0.08);
+  display: flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor: pointer;
+  transition: all .2s;
+  margin: 10px 0 28px;
+  -webkit-user-select:none; user-select:none;
+}
+.sos-btn:active { transform:scale(.95); box-shadow:0 0 20px rgba(180,80,30,0.4); }
+.sos-btn.pulsing { animation: pulse 2s infinite; }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 40px rgba(180,80,30,0.3), 0 0 80px rgba(180,80,30,0.1); }
+  50% { box-shadow: 0 0 60px rgba(212,168,67,0.4), 0 0 100px rgba(212,168,67,0.15); }
+}
+.sos-icon { font-size:42px; margin-bottom:6px; }
+.sos-label { font-family:'Cormorant Garamond',serif; font-size:14px; font-style:italic; color:var(--gold); letter-spacing:2px; }
+
+.sos-steps { width:100%; }
+.sos-step {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 18px;
+  margin-bottom: 10px;
+  display: flex; gap:14px; align-items:flex-start;
+  opacity: .35;
+  transform: translateY(6px);
+  transition: opacity .5s ease, transform .5s ease, border-color .4s;
+}
+.sos-step.lit { opacity:1; transform:translateY(0); border-color:var(--gold-dim); }
+.step-num-big {
+  font-family:'Cormorant Garamond',serif;
+  font-size:42px; color:var(--gold); opacity:.3; line-height:1; flex-shrink:0;
+  transition: opacity .4s;
+}
+.sos-step.lit .step-num-big { opacity:.7; }
+.step-body {}
+.step-name { font-size:14px; font-weight:500; color:var(--cream); letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+.step-desc { font-size:13px; color:var(--muted); line-height:1.65; }
+.sos-quote {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:17px;
+  color:var(--gold);
+  text-align:center;
+  line-height:1.7;
+  padding: 20px 10px 0;
+  opacity:0;
+  transition: opacity .8s ease .3s;
+}
+.sos-quote.show { opacity:1; }
+
+/* Timer bar */
+.timer-bar-wrap { width:100%; height:3px; background:rgba(255,255,255,0.05); border-radius:2px; margin:8px 0 22px; overflow:hidden; }
+.timer-bar { height:100%; width:0%; background:linear-gradient(90deg,var(--rust),var(--gold)); transition:width .1s linear; }
+
+/* ── SCREEN 3: EVENING JOURNAL ── */
+.journal-date {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:16px; color:var(--gold-light);
+  margin-bottom:20px; position:relative; z-index:1;
+}
+
+.journal-q { margin-bottom:14px; position:relative; z-index:1; }
+.journal-label { font-size:10px; color:var(--gold); letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px; }
+
+textarea {
+  width:100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius:12px;
+  padding:14px 15px;
+  color: var(--cream);
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;
+  font-style:italic;
+  line-height:1.7;
+  resize:none;
+  outline:none;
+  min-height:80px;
+  transition: border-color .3s;
+  -webkit-appearance:none;
+}
+textarea:focus { border-color:var(--gold-dim); }
+textarea::placeholder { color:rgba(240,228,204,0.18); }
+
+.save-btn {
+  width:100%;
+  padding:16px;
+  background:linear-gradient(135deg,var(--rust),var(--gold));
+  border:none; border-radius:14px;
+  color:var(--bg);
+  font-family:'Jost',sans-serif;
+  font-size:13px; font-weight:500;
+  letter-spacing:2.5px; text-transform:uppercase;
+  cursor:pointer;
+  transition:opacity .3s, transform .2s;
+  margin-top:6px;
+  position:relative; z-index:1;
+}
+.save-btn:active { opacity:.8; transform:scale(.98); }
+
+.past-entries { margin-top:28px; position:relative; z-index:1; }
+.past-label { font-size:10px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
+.entry-item {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 16px;
+  margin-bottom:8px;
+}
+.entry-date { font-size:11px; color:var(--gold); letter-spacing:1.5px; margin-bottom:6px; }
+.entry-preview { font-size:13px; color:var(--muted); line-height:1.55; font-style:italic; font-family:'Cormorant Garamond',serif; }
+
+/* ── SCREEN 4: GURUS ── */
+.guru-today {
+  background:linear-gradient(135deg,rgba(180,90,30,0.12),rgba(212,168,67,0.08));
+  border:1px solid rgba(212,168,67,0.22);
+  border-radius:18px;
+  padding:24px 20px;
+  text-align:center;
+  margin-bottom:20px;
+  position:relative; z-index:1;
+}
+.guru-today-label { font-size:10px; color:var(--rust-light); letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; }
+.guru-emoji { font-size:52px; margin-bottom:12px; }
+.guru-name { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--gold); margin-bottom:8px; font-weight:300; }
+.guru-lesson-text {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:17px;
+  color:var(--cream);
+  line-height:1.75;
+  margin-bottom:14px;
+}
+.guru-reflection {
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.65;
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  margin-top:2px;
+}
+.refresh-btn {
+  background:rgba(212,168,67,0.08);
+  border:1px solid var(--border);
+  border-radius:50px;
+  padding:10px 22px;
+  color:var(--gold);
+  font-family:'Jost',sans-serif;
+  font-size:12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .3s;
+  margin:0 auto 22px;
+  display:block;
+  position:relative; z-index:1;
+}
+.refresh-btn:active { background:var(--gold-glow); transform:scale(.97); }
+
+.gurus-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:8px; position:relative; z-index:1;
+}
+.guru-mini {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 13px;
+  cursor:pointer;
+  transition:border-color .3s;
+}
+.guru-mini:active { border-color:var(--gold-dim); }
+.guru-mini-icon { font-size:24px; margin-bottom:6px; }
+.guru-mini-name { font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--gold); margin-bottom:3px; }
+.guru-mini-lesson { font-size:11px; color:var(--muted); line-height:1.5; }
+
+/* ── SCREEN 5: WEEKLY ── */
+.week-grid {
+  display:grid; grid-template-columns:repeat(7,1fr);
+  gap:6px; margin-bottom:24px;
+  position:relative; z-index:1;
+}
+.day-cell {
+  aspect-ratio:1;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  cursor:pointer; gap:5px;
+  transition:all .3s;
+}
+.day-cell.today { border-color:var(--gold-dim); background:var(--card2); }
+.day-cell.done { background:rgba(180,90,30,0.15); border-color:rgba(180,90,30,0.4); }
+.day-name { font-size:9px; color:var(--muted); letter-spacing:.5px; text-transform:uppercase; }
+.day-dot { width:7px; height:7px; border-radius:50%; background:var(--border); transition:background .3s; }
+.day-cell.done .day-dot { background:var(--rust-light); }
+.day-cell.today .day-dot { background:var(--gold); }
+.day-num { font-size:14px; font-family:'Cormorant Garamond',serif; color:var(--muted); }
+.day-cell.today .day-num { color:var(--gold); }
+
+.stats-row {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:10px; margin-bottom:20px;
+  position:relative; z-index:1;
+}
+.stat-box {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 12px;
+  text-align:center;
+}
+.stat-num { font-family:'Cormorant Garamond',serif; font-size:32px; color:var(--gold); line-height:1; margin-bottom:4px; }
+.stat-label { font-size:10px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; line-height:1.4; }
+
+.weekly-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px 18px;
+  margin-bottom:12px;
+  position:relative; z-index:1;
+}
+.weekly-card-title { font-family:'Cormorant Garamond',serif; font-size:19px; color:var(--cream); margin-bottom:6px; }
+.weekly-card-body { font-size:13px; color:var(--muted); line-height:1.7; }
+.quote-line {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:15px;
+  color:var(--gold);
+  border-left:2px solid var(--gold-dim);
+  padding-left:12px;
+  margin-top:12px;
+  line-height:1.65;
+}
+
+/* ── TOAST ── */
+#toast {
+  position:fixed; bottom:85px; left:50%;
+  transform:translateX(-50%) translateY(50px);
+  background:var(--card2);
+  border:1px solid var(--gold-dim);
+  color:var(--gold);
+  padding:11px 22px;
+  border-radius:50px;
+  font-size:13px;
+  letter-spacing:1px;
+  z-index:999;
+  pointer-events:none;
+  transition:transform .4s ease, opacity .4s ease;
+  opacity:0;
+  white-space:nowrap;
+}
+#toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* ── MODAL ── */
+#modal {
+  display:none;
+  position:fixed; inset:0; z-index:500;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px);
+  align-items:flex-end; justify-content:center;
+  padding-bottom: var(--safe-bot);
+}
+#modal.open { display:flex; animation:modalIn .3s ease; }
+@keyframes modalIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+.modal-box {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:24px 24px 0 0;
+  padding:28px 22px calc(20px + var(--safe-bot));
+  width:100%; max-width:500px;
+  max-height:80vh; overflow-y:auto;
+}
+.modal-close {
+  float:right;
+  background:rgba(255,255,255,0.06);
+  border:none; border-radius:50%;
+  width:32px; height:32px;
+  font-size:18px; color:var(--muted);
+  cursor:pointer; line-height:32px; text-align:center;
+  margin-left:10px;
+}
+.modal-guru-icon { font-size:48px; margin:12px 0 10px; }
+.modal-guru-name { font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--gold); margin-bottom:10px; }
+.modal-guru-lesson { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px; color:var(--cream); line-height:1.75; margin-bottom:14px; }
+.modal-guru-apply { font-size:13px; color:var(--muted); line-height:1.7; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ═══ SCREEN: MORNING ═══ -->
+  <div class="screen active" id="s-morning">
+    <div class="greeting" id="greetingText">Good morning</div>
+    <div class="page-title">Today's Practice</div>
+    <div class="page-sub" id="todayDate"></div>
+
+    <div class="anchor-card">
+      <div class="anchor-label">Morning Anchor — Hold This Today</div>
+      <div class="anchor-text">"I am not the body rushing to work.<br>I am not the mind full of plans.<br>I am the awareness in which all of this is happening."</div>
+    </div>
+
+    <div class="progress-row">
+      <div class="prog-bar"><div class="prog-fill" id="mornProg" style="width:0%"></div></div>
+      <div class="prog-text" id="mornProgText">0 / 5</div>
+    </div>
+
+    <div class="checklist-item" onclick="toggleCheck(this,'m1')">
+      <div class="check-circle"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-content">
+        <div class="check-time">On waking · 60 sec</div>
+        <div class="check-title">Awareness Gap</div>
+        <div class="check-sub">Before phone — notice: "I am aware. I exist." Rest there.</div>
+      </div>
+    </div>
+
+    <div class="checklist-item" onclick="toggleCheck(this,'m2')">
+      <div class="check-circle"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-content">
+        <div class="check-time">Morning · 3 min</div>
+        <div class="check-title">Wear Roles Consciously</div>
+        <div class="check-sub">Name today's roles. Silently say: "I wear these hats, but I am not the hat."</div>
+      </div>
+    </div>
+
+    <div class="checklist-item" onclick="toggleCheck(this,'m3')">
+      <div class="check-circle"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-content">
+        <div class="check-time">Morning · 5 min</div>
+        <div class="check-title">Sky Breath</div>
+        <div class="check-sub">5 slow breaths. Inhale: picture vast open sky. Exhale: let thoughts float through as clouds.</div>
+      </div>
+    </div>
+
+    <div class="checklist-item" onclick="toggleCheck(this,'m4')">
+      <div class="check-circle"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-content">
+        <div class="check-time">Workday</div>
+        <div class="check-title">Arrowmaker's Focus</div>
+        <div class="check-sub">One deep work session: phone down, all tabs closed. Be fully in the task.</div>
+      </div>
+    </div>
+
+    <div class="checklist-item" onclick="toggleCheck(this,'m5')">
+      <div class="check-circle"><svg viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-content">
+        <div class="check-time">Coming Home</div>
+        <div class="check-title">Threshold Transition</div>
+        <div class="check-sub">Pause at the door. One breath. Shed the work roles before entering family space.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN: SOS ═══ -->
+  <div class="screen" id="s-sos">
+    <div class="page-title">Stress Relief</div>
+    <div class="page-sub">30-Second Witness Technique</div>
+
+    <div class="sos-wrap">
+      <div class="sos-btn" id="sosBtn" onclick="startSOS()">
+        <div class="sos-icon">🫁</div>
+        <div class="sos-label">Tap to Begin</div>
+      </div>
+
+      <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+
+      <div class="sos-steps">
+        <div class="sos-step" id="step1">
+          <div class="step-num-big">1</div>
+          <div class="step-body">
+            <div class="step-name">Locate</div>
+            <div class="step-desc">Where is this stress in your body right now? Chest? Throat? Stomach? Simply finding it creates distance from it.</div>
+          </div>
+        </div>
+        <div class="sos-step" id="step2">
+          <div class="step-num-big">2</div>
+          <div class="step-body">
+            <div class="step-name">Witness</div>
+            <div class="step-desc">"There is stress happening. And I am the one noticing the stress." The noticer is never stressed. Find the noticer.</div>
+          </div>
+        </div>
+        <div class="sos-step" id="step3">
+          <div class="step-num-big">3</div>
+          <div class="step-body">
+            <div class="step-name">Return</div>
+            <div class="step-desc">One slow breath. "I am the sky. This is a cloud passing through." Now act — from that calmer centre.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sos-quote" id="sosQuote">"The fire does not become impure<br>by burning impure things."</div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN: JOURNAL ═══ -->
+  <div class="screen" id="s-journal">
+    <div class="page-title">Evening Journal</div>
+    <div class="journal-date" id="journalDate"></div>
+
+    <div class="journal-q">
+      <div class="journal-label">Where did I act from ego today?</div>
+      <textarea id="j1" rows="3" placeholder="Something I said or avoided out of fear or pride..."></textarea>
+    </div>
+    <div class="journal-q">
+      <div class="journal-label">Where was I truly present?</div>
+      <textarea id="j2" rows="3" placeholder="A moment I was fully here — no past, no future..."></textarea>
+    </div>
+    <div class="journal-q">
+      <div class="journal-label">Tomorrow's one intention</div>
+      <textarea id="j3" rows="2" placeholder="One way I will act from awareness, not reaction..."></textarea>
+    </div>
+    <button class="save-btn" onclick="saveJournal()">✦ Save Tonight's Reflection</button>
+
+    <div class="past-entries" id="pastEntries"></div>
+  </div>
+
+  <!-- ═══ SCREEN: GURUS ═══ -->
+  <div class="screen" id="s-gurus">
+    <div class="page-title">24 Gurus</div>
+    <div class="page-sub">Nature as Teacher</div>
+
+    <div class="guru-today">
+      <div class="guru-today-label">Today's Guru</div>
+      <div class="guru-emoji" id="guruEmoji">🌍</div>
+      <div class="guru-name" id="guruName">Earth</div>
+      <div class="guru-lesson-text" id="guruLesson">"Bear all burdens without complaint. Remain steady no matter what is placed upon you."</div>
+      <div class="guru-reflection" id="guruReflection">Today, when something feels heavy — don't resist it. Be like earth: let it press you, and remain.</div>
+    </div>
+
+    <button class="refresh-btn" onclick="randomGuru()">↻ New Guru for Today</button>
+
+    <div class="gurus-grid" id="gurusGrid"></div>
+  </div>
+
+  <!-- ═══ SCREEN: WEEKLY ═══ -->
+  <div class="screen" id="s-weekly">
+    <div class="page-title">Weekly Tracker</div>
+    <div class="page-sub">Your Practice · This Week</div>
+
+    <div class="week-grid" id="weekGrid"></div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num" id="statDays">0</div>
+        <div class="stat-label">Days This Week</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="statStreak">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="statJournals">0</div>
+        <div class="stat-label">Reflections</div>
+      </div>
+    </div>
+
+    <div class="weekly-card">
+      <div class="weekly-card-title">Weekly Mauna Practice</div>
+      <div class="weekly-card-body">Once this week: 60 minutes of sacred silence. No phone, no music, no task. Sit with the question: <em style="color:var(--cream)">"Who am I, beneath everything?"</em> You don't need to answer. The question itself begins to dissolve the false answers.</div>
+      <div class="quote-line">"The student asked: What is Brahman? The teacher pointed to the sky and was silent. That was the teaching."</div>
+    </div>
+
+    <div class="weekly-card">
+      <div class="weekly-card-title">Weekly Integration</div>
+      <div class="weekly-card-body">Ask yourself at week's end:<br><br>
+      <span style="color:var(--gold)">1.</span> Which of the 24 Gurus showed up in my life this week?<br><br>
+      <span style="color:var(--gold)">2.</span> Where did I act from the witness, not pure reaction?<br><br>
+      <span style="color:var(--gold)">3.</span> One situation where I can apply "Act Fully, Attach Lightly" better next week?</div>
+    </div>
+
+    <div class="anchor-card" style="margin-top:8px">
+      <div class="anchor-label">The One Rule</div>
+      <div class="anchor-text" style="font-size:15px"><span style="color:var(--gold)">Act Fully.</span> Give everything to what is before you.<br><span style="color:var(--gold)">Attach Lightly.</span> Hold outcomes with an open hand.<br><span style="color:var(--gold)">Rest in Awareness.</span> You are always home.</div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM NAV ── -->
+  <nav id="nav">
+    <button class="nav-btn active" onclick="goTo('morning',this)">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      Morning
+    </button>
+    <button class="nav-btn" onclick="goTo('sos',this)">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4M12 16h.01"/></svg>
+      SOS
+    </button>
+    <button class="nav-btn" onclick="goTo('journal',this)">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Journal
+    </button>
+    <button class="nav-btn" onclick="goTo('gurus',this)">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Gurus
+    </button>
+    <button class="nav-btn" onclick="goTo('weekly',this)">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Weekly
+    </button>
+  </nav>
+</div>
+
+<!-- Modal -->
+<div id="modal" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── DATA ──
+const GURUS = [
+  {e:'🌍',n:'Earth',l:'"Bear all burdens without complaint. Remain steady no matter what is placed upon you."',r:'Today, when something feels heavy — don\'t resist it. Be like earth: let it press you, and remain unbroken.'},
+  {e:'💨',n:'Air',l:'"Move through the world without attaching to anything you pass through."',r:'Notice today what you are gripping. Air touches everything but clings to nothing.'},
+  {e:'🔥',n:'Fire',l:'"Consume equally — gold or garbage — without discrimination. Burn fully."',r:'Meet whatever comes today with the same full presence. Fire doesn\'t choose what it illuminates.'},
+  {e:'💧',n:'Water',l:'"Be pure by nature. Cleanse whatever you touch. Flow around obstacles, never fight them."',r:'In any resistance today, ask: where is the way around? Water never fights a boulder — it finds the path.'},
+  {e:'🌌',n:'Sky',l:'"You are vast and untouched. Clouds pass through the sky but cannot stain it."',r:'Thoughts and emotions will pass through you today. Remember you are the sky — never the cloud.'},
+  {e:'🌙',n:'Moon',l:'"The moon seems to wax and wane, but the moon itself never changes."',r:'Your roles and circumstances are changing constantly. What you ARE at the deepest level — has never changed.'},
+  {e:'☀️',n:'Sun',l:'"The same sun reflects differently in a thousand pots of water, yet the sun is always one."',r:'Every person you meet today is the same Self in a different vessel. See that, and watch how you treat people.'},
+  {e:'🌊',n:'Ocean',l:'"All rivers pour in, yet the ocean never overflows and never dries."',r:'Receive all inputs today — good news and bad, praise and criticism — without being fundamentally moved.'},
+  {e:'🐍',n:'Python',l:'"Does not chase — lies still and accepts what comes. Don\'t be anxious about survival."',r:'One thing you are anxious about providing or securing: trust today. The python doesn\'t scramble.'},
+  {e:'🐝',n:'Honeybee',l:'"Collects a little from many flowers, harming none. Take only what you need."',r:'Be minimal in consumption today — attention, food, talk. Take what nourishes. Leave the rest.'},
+  {e:'🎯',n:'Arrowmaker',l:'"So absorbed in his craft that a royal procession passed unnoticed."',r:'Find one hour today to be completely, utterly in one task. That focus is itself liberation.'},
+  {e:'👶',n:'Child',l:'"No ego, no shame, no pride — fully in the present moment."',r:'Approach one conversation today with a child\'s openness — no agenda, no defence, just presence.'},
+  {e:'🕷️',n:'Spider',l:'"Spins its web from within itself, then swallows it back."',r:'The universe is spun from within the Self. Today, notice how much of your world you are creating internally.'},
+  {e:'🦋',n:'Moth',l:'"Drawn to the flame, it dies. Don\'t be enslaved by what attracts you."',r:'Notice one craving or pull today that doesn\'t serve you. Just notice — don\'t act on it compulsively.'},
+  {e:'🦌',n:'Deer',l:'"Caught by beautiful music, it became prey. Don\'t be captured by flattery."',r:'Notice if you\'re being steered by social media, praise, or entertainment today. The deer died listening.'},
+  {e:'🐟',n:'Fish',l:'"Caught by the bait of taste. The craving tongue is a gateway to bondage."',r:'Eat mindfully today. Notice when you eat from hunger versus habit versus craving.'},
+  {e:'🌊',n:'Wave',l:'"Arises from the ocean, plays for a moment, then merges back."',r:'Your life is a wave. Enjoy the play of it — without forgetting you are always the ocean underneath.'},
+  {e:'☁️',n:'Cloud',l:'"Absorbs from the earth and returns it as rain, nourishing life."',r:'What have you received from the world that you can give back today — as skill, care, or presence?'},
+  {e:'🐛',n:'Caterpillar',l:'"Whatever you meditate on intensely, you become."',r:'What are you feeding your mind with most today? That is quietly becoming you.'},
+  {e:'🌲',n:'Tree',l:'"Gives shade to all — those who shelter under it and those who cut it down — without distinction."',r:'Is there someone who has treated you poorly? Can you offer them the same goodwill as those who cherish you?'},
+  {e:'🦅',n:'Eagle',l:'"Flies alone at great heights, undisturbed by the noise below."',r:'Some clarity only comes in solitude. Take 10 minutes alone today — no input, just you.'},
+  {e:'🏔️',n:'Mountain',l:'"Seasons change, storms rage, snow falls — the mountain simply is."',r:'What would it feel like to simply BE today — not achieving, not becoming, just fully here?'},
+  {e:'🌱',n:'Seed',l:'"Contains the entire tree invisibly. Your potential is already within you — not to be earned."',r:'Nothing about your worth needs to be proven today. You already contain everything needed.'},
+  {e:'🕯️',n:'Flame',l:'"Burns itself fully to give light. Transformation through complete giving."',r:'What would it mean to show up fully today — holding nothing back out of self-protection?'},
+];
+
+// ── STORAGE ──
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } },
+  set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
+};
+
+const todayKey = () => new Date().toDateString();
+
+// ── NAV ──
+function goTo(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── DATES ──
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const now = new Date();
+
+function setGreeting() {
+  const h = now.getHours();
+  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greetingText').textContent = g;
+}
+
+document.getElementById('todayDate').textContent = days[now.getDay()] + ' · ' + months[now.getMonth()] + ' ' + now.getDate();
+document.getElementById('journalDate').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+setGreeting();
+
+// ── CHECKLIST ──
+function toggleCheck(el, id) {
+  el.classList.toggle('checked');
+  const data = S.get('checks_' + todayKey()) || {};
+  data[id] = el.classList.contains('checked');
+  S.set('checks_' + todayKey(), data);
+  updateProgress();
+}
+
+function updateProgress() {
+  const items = document.querySelectorAll('.checklist-item');
+  const done = document.querySelectorAll('.checklist-item.checked').length;
+  const pct = Math.round(done/items.length*100);
+  document.getElementById('mornProg').style.width = pct + '%';
+  document.getElementById('mornProgText').textContent = done + ' / ' + items.length;
+  if(done === items.length && items.length > 0) {
+    S.set('day_done_' + todayKey(), true);
+    updateWeekStats();
+  }
+}
+
+function loadChecks() {
+  const data = S.get('checks_' + todayKey()) || {};
+  document.querySelectorAll('.checklist-item').forEach(el => {
+    const id = el.getAttribute('onclick').match(/'([^']+)'/g)?.[1]?.replace(/'/g,'');
+    if(id && data[id]) el.classList.add('checked');
+  });
+  updateProgress();
+}
+
+// ── SOS ──
+let sosRunning = false;
+let sosTimer = null;
+
+function startSOS() {
+  if(sosRunning) return;
+  sosRunning = true;
+  document.getElementById('sosBtn').classList.add('pulsing');
+  document.getElementById('sosBtn').querySelector('.sos-label').textContent = 'Breathing...';
+
+  const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+  const bar = document.getElementById('timerBar');
+  const quote = document.getElementById('sosQuote');
+  const total = 30000;
+  const stepDur = 9000;
+  let started = Date.now();
+
+  steps.forEach(s => s.classList.remove('lit'));
+  quote.classList.remove('show');
+  bar.style.width = '0%';
+
+  let stepIdx = 0;
+  steps[0].classList.add('lit');
+
+  const tick = setInterval(() => {
+    const elapsed = Date.now() - started;
+    const pct = Math.min(elapsed / total * 100, 100);
+    bar.style.width = pct + '%';
+
+    const newIdx = Math.min(Math.floor(elapsed / stepDur), 2);
+    if(newIdx > stepIdx) {
+      stepIdx = newIdx;
+      if(stepIdx < 3) steps[stepIdx].classList.add('lit');
+    }
+
+    if(elapsed >= total) {
+      clearInterval(tick);
+      sosRunning = false;
+      document.getElementById('sosBtn').classList.remove('pulsing');
+      document.getElementById('sosBtn').querySelector('.sos-label').textContent = 'Tap to Begin';
+      quote.classList.add('show');
+      bar.style.width = '100%';
+    }
+  }, 100);
+}
+
+// ── JOURNAL ──
+function saveJournal() {
+  const j1 = document.getElementById('j1').value.trim();
+  const j2 = document.getElementById('j2').value.trim();
+  const j3 = document.getElementById('j3').value.trim();
+  if(!j1 && !j2 && !j3) { showToast('Write something first...'); return; }
+
+  const entries = S.get('journals') || [];
+  entries.unshift({ date: todayKey(), j1, j2, j3, ts: Date.now() });
+  if(entries.length > 30) entries.pop();
+  S.set('journals', entries);
+  S.set('journal_done_' + todayKey(), true);
+  showToast('✦ Reflection saved');
+  renderPastEntries();
+  updateWeekStats();
+}
+
+function renderPastEntries() {
+  const entries = S.get('journals') || [];
+  const wrap = document.getElementById('pastEntries');
+  if(!entries.length) { wrap.innerHTML=''; return; }
+  wrap.innerHTML = '<div class="past-label">Past Reflections</div>' +
+    entries.slice(0,5).map(e => `
+      <div class="entry-item">
+        <div class="entry-date">${e.date}</div>
+        <div class="entry-preview">${(e.j1||e.j2||e.j3||'').substring(0,120)}${(e.j1||e.j2||e.j3||'').length>120?'…':''}</div>
+      </div>`).join('');
+}
+
+function loadJournal() {
+  const entries = S.get('journals') || [];
+  const today = entries.find(e => e.date === todayKey());
+  if(today) {
+    document.getElementById('j1').value = today.j1 || '';
+    document.getElementById('j2').value = today.j2 || '';
+    document.getElementById('j3').value = today.j3 || '';
+  }
+  renderPastEntries();
+}
+
+// ── GURUS ──
+let currentGuruIdx = -1;
+
+function randomGuru() {
+  let idx = Math.floor(Math.random() * GURUS.length);
+  if(idx === currentGuruIdx) idx = (idx + 1) % GURUS.length;
+  currentGuruIdx = idx;
+  setGuru(idx);
+}
+
+function setGuru(idx) {
+  const g = GURUS[idx];
+  document.getElementById('guruEmoji').textContent = g.e;
+  document.getElementById('guruName').textContent = g.n;
+  document.getElementById('guruLesson').textContent = g.l;
+  document.getElementById('guruReflection').textContent = g.r;
+}
+
+function buildGuruGrid() {
+  const grid = document.getElementById('gurusGrid');
+  grid.innerHTML = GURUS.map((g,i) => `
+    <div class="guru-mini" onclick="showGuruModal(${i})">
+      <div class="guru-mini-icon">${g.e}</div>
+      <div class="guru-mini-name">${g.n}</div>
+      <div class="guru-mini-lesson">${g.l.substring(1,60)}…</div>
+    </div>`).join('');
+}
+
+function showGuruModal(idx) {
+  const g = GURUS[idx];
+  document.getElementById('modalContent').innerHTML = `
+    <div style="text-align:center">
+      <div class="modal-guru-icon">${g.e}</div>
+      <div class="modal-guru-name">${g.n}</div>
+    </div>
+    <div class="modal-guru-lesson">${g.l}</div>
+    <div class="modal-guru-apply">${g.r}</div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) {
+  if(e.target.id==='modal') document.getElementById('modal').classList.remove('open');
+}
+
+// Daily guru based on date
+function initDailyGuru() {
+  const dayNum = Math.floor(Date.now() / 86400000);
+  currentGuruIdx = dayNum % GURUS.length;
+  setGuru(currentGuruIdx);
+}
+
+// ── WEEKLY ──
+function buildWeekGrid() {
+  const grid = document.getElementById('weekGrid');
+  const todayWDay = now.getDay();
+  const shortDays = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  grid.innerHTML = '';
+
+  for(let i=0;i<7;i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (todayWDay - i));
+    const isToday = i === todayWDay;
+    const isDone = S.get('day_done_' + d.toDateString()) || S.get('journal_done_' + d.toDateString());
+
+    const cell = document.createElement('div');
+    cell.className = 'day-cell' + (isToday?' today':'') + (isDone?' done':'');
+    cell.innerHTML = `<div class="day-name">${shortDays[i]}</div><div class="day-num">${d.getDate()}</div><div class="day-dot"></div>`;
+    cell.onclick = function() {
+      this.classList.toggle('done');
+      S.set('day_done_' + d.toDateString(), this.classList.contains('done'));
+      updateWeekStats();
+    };
+    grid.appendChild(cell);
+  }
+}
+
+function updateWeekStats() {
+  const todayWDay = now.getDay();
+  let daysCount = 0, journalsCount = 0;
+
+  for(let i=0;i<7;i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (todayWDay - i));
+    if(S.get('day_done_' + d.toDateString())) daysCount++;
+    if(S.get('journal_done_' + d.toDateString())) journalsCount++;
+  }
+
+  // streak
+  let streak = 0;
+  for(let i=0;i<30;i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    if(S.get('day_done_' + d.toDateString()) || S.get('journal_done_' + d.toDateString())) streak++;
+    else break;
+  }
+
+  document.getElementById('statDays').textContent = daysCount;
+  document.getElementById('statStreak').textContent = streak;
+  document.getElementById('statJournals').textContent = (S.get('journals')||[]).length;
+
+  // rebuild week grid to reflect changes
+  buildWeekGrid();
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── INIT ──
+loadChecks();
+loadJournal();
+initDailyGuru();
+buildGuruGrid();
+buildWeekGrid();
+updateWeekStats();
+
+// Prevent overscroll on iOS
+document.addEventListener('touchmove', e => {
+  if(!e.target.closest('.screen')) e.preventDefault();
+}, { passive: false });
+</script>
+</body>
+</html>
